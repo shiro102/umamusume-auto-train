@@ -11,7 +11,7 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 ![Screenshot](screenshot.png)
 
 ## Features
-
+- Auto choose option with energy (2nd year, 3rd year, new year, extra training). Hard code some events of Kitasan Black, Fine Motion, etc. (you can add your own card)
 - Automatically trains Uma with stat prioritization
 - Keeps racing until fan count meets the goal, and always picks races with matching aptitude
 - Checks mood and handles debuffs automatically
