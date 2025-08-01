@@ -4,8 +4,8 @@ import json
 
 pyautogui.useImageNotFoundException(False)
 
-from core.state import check_support_card, check_failure, check_turn, check_mood, check_current_year, check_criteria
-from core.logic import do_something, do_something_fallback, all_training_unsafe, MAX_FAILURE
+from core.state import check_support_card, check_failure, check_turn, check_mood, check_current_year, check_criteria, check_event_name
+from core.logic import do_something, do_something_fallback, check_training_unsafe, MAX_FAILURE
 from utils.constants import MOOD_LIST
 
 def is_racing_available(year):
@@ -18,11 +18,17 @@ def is_racing_available(year):
 from core.recognizer import is_infirmary_active, match_template
 from utils.scenario import ura
 
+# Load config once at startup
 with open("config.json", "r", encoding="utf-8") as file:
   config = json.load(file)
 
 MINIMUM_MOOD = config["minimum_mood"]
 PRIORITIZE_G1_RACE = config["prioritize_g1_race"]
+NEW_YEAR_EVENT_DONE = False
+FIRST_TURN_DONE = False
+
+def get_config():
+    return config
 
 def click(img, confidence = 0.8, minSearch = 2, click = 1, text = ""):
   btn = pyautogui.locateCenterOnScreen(img, confidence=confidence, minSearchTime=minSearch)
@@ -33,6 +39,24 @@ def click(img, confidence = 0.8, minSearch = 2, click = 1, text = ""):
     pyautogui.click(clicks=click)
     return True
   
+  return False
+
+def click_event_choice(choice_number, minSearch = 0.2, confidence = 0.8):
+  """Special function for clicking event choices with higher confidence to avoid confusion"""
+  img_path = f"assets/icons/event_choice_1.png"
+  # Use higher confidence for event choices to avoid confusion between similar images
+  btn = pyautogui.locateCenterOnScreen(img_path, confidence=confidence, minSearchTime=minSearch)
+  if btn:
+    print(f"[INFO] Event choice 1 found: {btn}, selecting option choice {choice_number} below it")
+
+    if choice_number != 1:
+      adjusted_btn = (btn.x, btn.y + (choice_number - 1) * 115)
+      pyautogui.moveTo(adjusted_btn, duration=0.175)
+    else:
+      pyautogui.moveTo(btn, duration=0.175)
+
+    pyautogui.click()
+    return True
   return False
 
 def go_to_training():
@@ -112,12 +136,9 @@ def do_race(prioritize_g1 = False):
 def race_day():
   # Check skill points cap before race day (if enabled)
   from core.state import check_skill_points_cap
-  import json
   
-  # Load config to check if skill point check is enabled
-  with open("config.json", "r", encoding="utf-8") as file:
-    config = json.load(file)
-  
+  # Use cached config
+  config = get_config()
   enable_skill_check = config.get("enable_skill_point_check", True)
   
   if enable_skill_check:
@@ -190,28 +211,82 @@ def race_select(prioritize_g1 = False):
     return False
 
 def race_prep():
-  view_result_btn = pyautogui.locateCenterOnScreen("assets/buttons/view_results.png", confidence=0.8, minSearchTime=20)
+  print(f"[INFO] Finding view results button at time: {time.time()}")
+  view_result_btn = pyautogui.locateCenterOnScreen("assets/buttons/view_results.png", confidence=0.8, minSearchTime=10)
+  print(f"[INFO] View result button found at time: {time.time()}")
+
   if view_result_btn:
     pyautogui.click(view_result_btn)
-    time.sleep(0.5)
+    time.sleep(1.5)
     for i in range(3):
-      pyautogui.tripleClick(interval=0.2)
-      time.sleep(0.5)
+      pyautogui.tripleClick(interval=0.3)
+      time.sleep(1.5)
 
 def after_race():
-  click(img="assets/buttons/next_btn.png", minSearch=6)
-  time.sleep(0.5) # Raise a bit
-  pyautogui.click()
-  click(img="assets/buttons/next2_btn.png", minSearch=6)
+  print(f"[INFO] Finding after race first next button at time: {time.time()}")
+  click(img="assets/buttons/next_btn.png", minSearch=3)
+  print(f"[INFO] Finding after race first next button at time: {time.time()}")
+  time.sleep(3) # Raise a bit
+  # pyautogui.click()
+  print(f"[INFO] Finding after race second next button at time: {time.time()}")
+  click(img="assets/buttons/next2_btn.png", minSearch=3)
+  print(f"[INFO] Finding after race second next button at time: {time.time()}")
 
 def career_lobby():
+  global FIRST_TURN_DONE
+  global NEW_YEAR_EVENT_DONE
+  
   # Program start
   while True:
-    # First check, event
-    if click(img="assets/icons/event_choice_1.png", minSearch=0.2, text="[INFO] Event found, automatically select top choice."):
-      continue
+    year = check_current_year()
+    event_name = check_event_name()
 
-    # Second check, inspiration
+    print(f"[INFO] Event Name: {event_name}")
+
+    ### First check, event
+    if year == "Classic Year Early Jan" and not NEW_YEAR_EVENT_DONE: # 2nd New Year Event for energy
+      print("[ACTION] Checking for 2nd New Year Event for energy")
+      if click_event_choice(2, minSearch=1, confidence=0.9):
+        print("[ACTION] Clicking choice 2 for 2nd New Year Event for energy")
+        NEW_YEAR_EVENT_DONE = True
+        continue
+      else:
+        if click_event_choice(1, minSearch=0.2, confidence=0.9):
+          print("[ACTION] Cannot find 2nd New Year Event for energy, clicking choice 1")
+          NEW_YEAR_EVENT_DONE = True
+          continue
+    else: # support event belows, auto choose 1st option if not specified
+      if "extra training" in event_name.lower(): # Always choose rest option for extra training event (depends on the Uma), change if needed
+        print("[ACTION] Extra Training event found, clicking choice 2 for energy")
+        if click_event_choice(2, minSearch=0.1, confidence=0.9):
+          print("[ACTION] Clicked choice 2")
+          continue
+      elif "lovely training weather" in event_name.lower(): # FM event, choose 3rd for Perfect Condition
+        print("[ACTION] Lovely Training Weather event found, clicking choice 3 for Perfect Condition")
+        if click_event_choice(3, minSearch=0.1, confidence=0.9):
+          print("[ACTION] Clicked choice 3")
+          continue
+      elif "preparing my special move" in event_name.lower(): # Biko Pegasus event, choose 2nd for energy
+        print("[ACTION] Preparing My Special Move event found, clicking choice 2 for energy")
+        if click_event_choice(2, minSearch=0.1, confidence=0.9):
+          print("[ACTION] Clicked choice 2")
+          continue
+      elif "solo nighttime run" in event_name.lower(): # Manhattan Cafe event, choose 2nd for energy
+        print("[ACTION] Solo Nighttime Run event found, clicking choice 2 for energy")
+        if click_event_choice(2, minSearch=0.1, confidence=0.9):
+          print("[ACTION] Clicked choice 2")
+          continue
+      elif "happenstance introduced" in event_name.lower(): # Agnes Tachyon event, choose 2nd for wit
+        print("[ACTION] Happenstance event found, clicking choice 2 for wit")
+        if click_event_choice(2, minSearch=0.1, confidence=0.9):
+          print("[ACTION] Clicked choice 2")
+          continue        
+      else:
+        if click_event_choice(1, minSearch=0.1, confidence=0.9):
+          print("[ACTION] Clicked choice 1")
+          continue
+
+    ### Second check, inspiration
     if click(img="assets/buttons/inspiration_btn.png", minSearch=0.2, text="[INFO] Inspiration found."):
       continue
 
@@ -221,7 +296,7 @@ def career_lobby():
     if click(img="assets/buttons/cancel_btn.png", minSearch=0.2):
       continue
 
-    # Check if current menu is in career lobby
+    ### Check if current menu is in career lobby
     tazuna_hint = pyautogui.locateCenterOnScreen("assets/ui/tazuna_hint.png", confidence=0.8, minSearchTime=0.2)
 
     if tazuna_hint is None:
@@ -230,7 +305,7 @@ def career_lobby():
 
     time.sleep(0.5)
 
-    # Check if there is debuff status
+    ### Check if there is debuff status
     debuffed = pyautogui.locateOnScreen("assets/buttons/infirmary_btn2.png", confidence=0.9, minSearchTime=1)
     if debuffed:
       if is_infirmary_active((debuffed.left, debuffed.top, debuffed.width, debuffed.height)):
@@ -241,14 +316,14 @@ def career_lobby():
     mood = check_mood()
     mood_index = MOOD_LIST.index(mood)
     minimum_mood = MOOD_LIST.index(MINIMUM_MOOD)
-    turn = check_turn()
-    year = check_current_year()
     criteria = check_criteria()
+    turn = check_turn()
     
     print("\n=======================================================================================\n")
     print(f"Year: {year}")
     print(f"Mood: {mood}")
     print(f"Turn: {turn}\n")
+    print(f"Criteria: {criteria}")
 
     # URA SCENARIO
     if year == "Finale Season" and turn == "Race Day":
@@ -269,25 +344,30 @@ def career_lobby():
       race_day()
       continue
 
-    # Mood check
-    if mood_index < minimum_mood:
+    # Mood check, not checking in the first turn of Pre-Debut
+    if mood_index < minimum_mood and not (year == "Junior Year Pre-Debut" and not FIRST_TURN_DONE):
       print("[INFO] Mood is low, trying recreation to increase mood")
       do_recreation()
       continue
 
+    if not FIRST_TURN_DONE:
+      FIRST_TURN_DONE = True
+
     # Check if goals is not met criteria AND it is not Pre-Debut AND turn is less than 10 AND Goal is already achieved
-    if criteria.split(" ")[0] != "criteria" and year != "Junior Year Pre-Debut" and turn < 10 and criteria != "Goal Achievedl":
-      race_found = do_race()
-      if race_found:
-        continue
-      else:
-        # If there is no race matching to aptitude, go back and do training instead
-        click(img="assets/buttons/back_btn.png", text="[INFO] Race not found. Proceeding to training.")
-        time.sleep(0.5)
+    # if criteria.split(" ")[0] != "criteria" and year != "Junior Year Pre-Debut" and turn < 10 and criteria != "Goal Achieved":
+    #   print("[INFO] Run for fans.")
+    #   race_found = do_race()
+    #   if race_found:
+    #     continue
+    #   else:
+    #     # If there is no race matching to aptitude, go back and do training instead
+    #     click(img="assets/buttons/back_btn.png", text="[INFO] Race not found. Proceeding to training.")
+    #     time.sleep(0.5)
 
     year_parts = year.split(" ")
     # If Prioritize G1 Race is true, check G1 race every turn
     if PRIORITIZE_G1_RACE and year_parts[0] != "Junior" and is_racing_available(year):
+      print("[INFO] Prioritizing G1 race.")
       g1_race_found = do_race(PRIORITIZE_G1_RACE)
       if g1_race_found:
         continue
@@ -302,16 +382,16 @@ def career_lobby():
       continue
 
     # Last, do training
-    time.sleep(0.5)
+    time.sleep(1)
     results_training = check_training()
     
     best_training = do_something(results_training)
     if best_training == "PRIORITIZE_RACE":
       print("[INFO] Prioritizing race due to insufficient support cards.")
       
-      # Check if all training options are unsafe before attempting race
-      if all_training_unsafe(results_training):
-        print(f"[INFO] All training options have failure rate > {MAX_FAILURE}%. Skipping race and choosing to rest.")
+      # Check if stamina training option are unsafe before attempting race
+      if check_training_unsafe(results_training, type="stamina"):
+        print(f"[INFO] Stamina training option has failure rate > {MAX_FAILURE}%. Skipping race and choosing to rest.")
         do_rest()
         continue
       

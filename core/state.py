@@ -4,7 +4,7 @@ from utils.screenshot import capture_region, enhanced_screenshot
 from core.ocr import extract_text, extract_number
 from core.recognizer import match_template
 
-from utils.constants import SUPPORT_CARD_ICON_REGION, MOOD_REGION, TURN_REGION, FAILURE_REGION, YEAR_REGION, MOOD_LIST, CRITERIA_REGION
+from utils.constants import SUPPORT_CARD_ICON_REGION, MOOD_REGION, TURN_REGION, FAILURE_REGION, YEAR_REGION, EVENT_NAME_REGION, MOOD_LIST, CRITERIA_REGION
 
 # Get Stat
 def stat_state():
@@ -118,6 +118,12 @@ def check_criteria():
   text = extract_text(img)
   return text
 
+# Check event name 
+def check_event_name():
+  img = enhanced_screenshot(EVENT_NAME_REGION)
+  text = extract_text(img)
+  return text
+
 # Check skill points
 def check_skill_points():
   from utils.constants import SKILL_PTS_REGION
@@ -128,12 +134,11 @@ def check_skill_points():
 
 # Check skill points and handle cap
 def check_skill_points_cap():
-  import json
   from pymsgbox import confirm
   
-  # Load config
-  with open("config.json", "r", encoding="utf-8") as file:
-    config = json.load(file)
+  # Use cached config from execute.py
+  from core.execute import get_config
+  config = get_config()
   
   skill_point_cap = config.get("skill_point_cap", 100)
   current_skill_points = check_skill_points()
