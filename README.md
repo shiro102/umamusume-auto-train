@@ -19,6 +19,7 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 - Open game, fullscreen, resolution must be 1920 x 1080 | Mở game, full screen, độ phân giải của màn hình phải là 1920 x 1080
 - Run python main.py | Chạy python main.py
 <img width="968" height="927" alt="image" src="https://github.com/user-attachments/assets/cce19ce0-6323-43a2-8757-c9e11849bd0d" />
+- Read more below | Cách dùng có thêm ở dưới
 
 ## Features
 - Auto choose option with energy (2nd year, 3rd year, new year, extra training). Hard code some events of Kitasan Black, Fine Motion, etc. (you can add your own card)
