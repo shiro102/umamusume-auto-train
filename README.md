@@ -10,7 +10,7 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 
 ![Screenshot](screenshot.png)
 
-## How to use
+## How to use (Cách dùng)
 - Clone the code from git | Lấy code về từ git, nếu ko biết thì dùng tool này (https://www.youtube.com/watch?v=ZFFtMyOFPe8)
 - Install latest python version | Tải python bản mới nhất: https://www.python.org/downloads/
 - Open Window PowerShell  | Window PowerShell
