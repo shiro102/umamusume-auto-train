@@ -2,13 +2,24 @@
 
 This is a fork from [samsulpanjul/umamusume-auto-train](https://github.com/samsulpanjul/umamusume-auto-train)
 
-Like the title says, this is a simple auto training for Umamusume.
+Like the title says, this is a simple auto-training for Umamusume.
 
 This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/shiokaze/UmamusumeAutoTrainer)
 
 [Demo video](https://youtu.be/CXSYVD-iMJk)
 
 ![Screenshot](screenshot.png)
+
+## How to use
+- Clone the code from git | Lấy code về từ git, nếu ko biết thì dùng tool này (https://www.youtube.com/watch?v=ZFFtMyOFPe8)
+- Install latest python version | Tải python bản mới nhất: https://www.python.org/downloads/
+- Open Window PowerShell  | Window PowerShell
+- Go to folder of the code using cd /d (image) | Đến thư mục của code vừa mới tải xuống bằng cd /d (trong ảnh)
+<img width="866" height="249" alt="image" src="https://github.com/user-attachments/assets/2f793ba7-90b0-4353-ad12-cc00a2f924d8" />
+- Run | Chạy: "pip install -r requirements.txt"
+- Open game, fullscreen, resolution must be 1920 x 1080 | Mở game, full screen, độ phân giải của màn hình phải là 1920 x 1080
+- Run python main.py | Chạy python main.py
+<img width="968" height="927" alt="image" src="https://github.com/user-attachments/assets/cce19ce0-6323-43a2-8757-c9e11849bd0d" />
 
 ## Features
 - Auto choose option with energy (2nd year, 3rd year, new year, extra training). Hard code some events of Kitasan Black, Fine Motion, etc. (you can add your own card)
