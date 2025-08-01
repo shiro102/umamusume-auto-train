@@ -16,6 +16,7 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 - Open Window PowerShell  | Window PowerShell
 - Go to folder of the code using cd /d (image) | Đến thư mục của code vừa mới tải xuống bằng cd /d (trong ảnh)
 <img width="866" height="249" alt="image" src="https://github.com/user-attachments/assets/2f793ba7-90b0-4353-ad12-cc00a2f924d8" />
+
 - Run | Chạy: "pip install -r requirements.txt"
 - Open game, fullscreen, resolution must be 1920 x 1080 | Mở game, full screen, độ phân giải của màn hình phải là 1920 x 1080
 - Run python main.py | Chạy python main.py
