@@ -196,7 +196,7 @@ def locate_center_on_phone(
                 time.sleep(0.05)  # Small delay between retries
 
         # If we reach here, no match was found within the time limit
-        print(f"[PHONE] {template_path} not found within {min_search_time}s (best confidence: {best_confidence:.3f})")
+        # print(f"[PHONE] {template_path} not found within {min_search_time}s (best confidence: {best_confidence:.3f})")
         return None
 
     except Exception as e:
@@ -493,7 +493,7 @@ def locate_all_centers_on_phone(
                 time.sleep(0.05)  # Small delay between retries
 
         # If we reach here, no match was found within the time limit
-        print(f"[PHONE] {template_path} not found within {min_search_time}s")
+        # print(f"[PHONE] {template_path} not found within {min_search_time}s")
         return []
 
     except Exception as e:

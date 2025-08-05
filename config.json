@@ -7,7 +7,7 @@
   "minimum_mood": "GOOD",
   "maximum_failure": 15,
   "prioritize_g1_race": false,
-  "skill_point_cap": 200,
+  "skill_point_cap": 280,
   "enable_skill_point_check": true,
   "min_support": 2,
   "stat_caps": {
