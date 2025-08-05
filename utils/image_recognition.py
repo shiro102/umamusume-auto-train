@@ -174,9 +174,9 @@ def locate_center_on_phone(
                     center_x += region[0]
                     center_y += region[1]
 
-                print(
-                    f"[PHONE] Found {template_path} at ({center_x}, {center_y}) with confidence {best_confidence:.3f} (scale: {best_scale})"
-                )
+                # print(
+                #     f"[PHONE] Found {template_path} at ({center_x}, {center_y}) with confidence {best_confidence:.3f} (scale: {best_scale})"
+                # )
 
                 # Save debug images for manual verification
                 if config.get("saveDebugImages", False):
