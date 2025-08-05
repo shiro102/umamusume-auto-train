@@ -67,6 +67,42 @@ class ADBController:
             print(f"[ADB] Click error: {e}")
             return False
     
+    def mouse_down(self, x: int, y: int):
+        """Simulate mouse down at coordinates using ADB"""
+        if not self.device_id:
+            print("[ADB] No device connected")
+            return False
+        
+        try:
+            # Use ADB shell input motionevent DOWN command
+            cmd = ["adb", "-s", self.device_id, "shell", "input", "motionevent", "DOWN", str(x), str(y)]
+            result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+            
+            # print(f"[ADB] Mouse down at ({x}, {y})")
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            print(f"[ADB] Mouse down error: {e}")
+            return False
+    
+    def mouse_up(self, x: int, y: int):
+        """Simulate mouse up at coordinates using ADB"""
+        if not self.device_id:
+            print("[ADB] No device connected")
+            return False
+        
+        try:
+            # Use ADB shell input motionevent UP command
+            cmd = ["adb", "-s", self.device_id, "shell", "input", "motionevent", "UP", str(x), str(y)]
+            result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+            
+            # print(f"[ADB] Mouse up at ({x}, {y})")
+            return True
+            
+        except subprocess.CalledProcessError as e:
+            print(f"[ADB] Mouse up error: {e}")
+            return False
+    
     def move_to(self, x: int, y: int, duration: float = 0.175):
         """Move to coordinates (ADB doesn't support duration, so we simulate it)"""
         if not self.device_id:
@@ -349,6 +385,20 @@ def adb_move_to(x: int, y: int, duration: float = 0.175) -> bool:
     controller = get_adb_controller()
     if controller and controller.is_connected():
         return controller.move_to(x, y, duration)
+    return False
+
+def adb_mouse_down(x: int, y: int) -> bool:
+    """Perform mouse down at coordinates using ADB"""
+    controller = get_adb_controller()
+    if controller and controller.is_connected():
+        return controller.mouse_down(x, y)
+    return False
+
+def adb_mouse_up(x: int, y: int) -> bool:
+    """Perform mouse up at coordinates using ADB"""
+    controller = get_adb_controller()
+    if controller and controller.is_connected():
+        return controller.mouse_up(x, y)
     return False
 
 def adb_scroll(distance: int) -> bool:

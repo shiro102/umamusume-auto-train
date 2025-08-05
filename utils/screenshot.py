@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 
 from PIL import Image, ImageEnhance
@@ -84,6 +85,7 @@ def enhanced_screenshot(region=(0, 0, 1920, 1080), save_debug=False) -> Image.Im
                     # Save debug image if requested
                     if save_debug:
                         save_debug_image(pil_img, "enhanced_screenshot")
+                        time.sleep(1)
 
                     return pil_img
                 else:

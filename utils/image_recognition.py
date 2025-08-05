@@ -15,7 +15,7 @@ except FileNotFoundError:
     config = {"usePhone": False}
 
 USE_PHONE = config.get("usePhone", False)
-
+BEST_SCALES = 0.8
 
 def save_debug_image(
     screenshot,
@@ -127,7 +127,7 @@ def locate_center_on_phone(
             (tH, tW) = template.shape[:2]
 
             # Try multiple scales for better detection
-            scales = [0.8, 0.9, 1.0, 1.1, 1.2]
+            scales = [BEST_SCALES]
             best_match = None
             best_confidence = 0
             best_scale = 1.0
@@ -174,9 +174,9 @@ def locate_center_on_phone(
                     center_x += region[0]
                     center_y += region[1]
 
-                # print(
-                #     f"[PHONE] Found {template_path} at ({center_x}, {center_y}) with confidence {best_confidence:.3f} (scale: {best_scale})"
-                # )
+                print(
+                    f"[PHONE] Found {template_path} at ({center_x}, {center_y}) with confidence {best_confidence:.3f} (scale: {best_scale})"
+                )
 
                 # Save debug images for manual verification
                 if config.get("saveDebugImages", False):
@@ -196,7 +196,7 @@ def locate_center_on_phone(
                 time.sleep(0.05)  # Small delay between retries
 
         # If we reach here, no match was found within the time limit
-        # print(f"[PHONE] {template_path} not found within {min_search_time}s (best confidence: {best_confidence:.3f})")
+        print(f"[PHONE] {template_path} not found within {min_search_time}s (best confidence: {best_confidence:.3f})")
         return None
 
     except Exception as e:
@@ -281,7 +281,7 @@ def locate_on_phone(template_path, confidence=0.8, min_search_time=0.2, region=N
             (tH, tW) = template.shape[:2]
 
             # Try multiple scales for better detection
-            scales = [0.8, 0.9, 1.0, 1.1, 1.2]
+            scales = [BEST_SCALES]
             best_match = None
             best_confidence = 0
             best_scale = 1.0
@@ -376,3 +376,185 @@ def locate_on_desktop(template_path, confidence=0.8, min_search_time=0.2, region
     except Exception as e:
         print(f"[DESKTOP] Image recognition error: {e}")
         return None
+
+
+def locate_all_centers_on_phone(
+    template_path, confidence=0.8, min_search_time=1, region=None, max_matches=10
+):
+    """Locate all template images on phone screenshot that meet confidence threshold"""
+    try:
+        from utils.adb_utils import get_adb_controller
+        import imutils
+
+        controller = get_adb_controller()
+
+        if not controller or not controller.is_connected():
+            print("[WARNING] ADB not connected, falling back to desktop")
+            return []
+
+        start_time = time.time()
+        max_search_time = min_search_time
+
+        while time.time() - start_time < max_search_time:
+            # Take phone screenshot
+            screenshot = controller.take_screenshot()
+
+            # Convert RGB to BGR for cv2.imwrite
+            if screenshot is None:
+                print(
+                    "[WARNING] Could not take phone screenshot, falling back to desktop"
+                )
+                return []
+
+            # Convert to OpenCV format
+            screenshot_cv = cv2.cvtColor(screenshot, cv2.COLOR_RGB2BGR)
+
+            # Load template
+            template = cv2.imread(template_path, cv2.IMREAD_COLOR)
+            if template is None:
+                print(f"[ERROR] Could not load template: {template_path}")
+                return []
+
+            # Crop screenshot to region if specified
+            if region:
+                x, y, w, h = region
+                screenshot_cv = screenshot_cv[y : y + h, x : x + w]
+
+            # Use imutils for better template matching with multiple scales
+            (tH, tW) = template.shape[:2]
+
+            # Try multiple scales for better detection
+            scales = [BEST_SCALES]
+            all_matches = []  # Store all matches above confidence threshold
+
+            for scale in scales:
+                # Resize the image according to the scale
+                resized = imutils.resize(
+                    screenshot_cv, width=int(screenshot_cv.shape[1] * scale)
+                )
+                r = screenshot_cv.shape[1] / float(resized.shape[1])
+
+                # If the resized image is smaller than the template, break
+                if resized.shape[0] < tH or resized.shape[1] < tW:
+                    break
+
+                # Apply template matching
+                result = cv2.matchTemplate(resized, template, cv2.TM_CCOEFF_NORMED)
+                
+                # Find all locations where the correlation exceeds the threshold
+                locations = np.where(result >= confidence)
+                
+                for pt in zip(*locations[::-1]):  # Switch columns and rows
+                    match_confidence = result[pt[1], pt[0]]
+                    
+                    # Calculate the center point for this match
+                    (startX, startY) = (
+                        int(pt[0] * r),
+                        int(pt[1] * r),
+                    )
+                    (endX, endY) = (
+                        int((pt[0] + tW) * r),
+                        int((pt[1] + tH) * r),
+                    )
+
+                    center_x = startX + (endX - startX) // 2
+                    center_y = startY + (endY - startY) // 2
+
+                    # Adjust coordinates if region was specified
+                    if region:
+                        center_x += region[0]
+                        center_y += region[1]
+
+                    all_matches.append({
+                        'confidence': match_confidence,
+                        'scale': scale,
+                        'center': (center_x, center_y),
+                        'location': (startX, startY, endX - startX, endY - startY),
+                        'r': r
+                    })
+
+            # If we found any matches above our confidence threshold
+            if all_matches:
+                # Apply non-maximum suppression to remove overlapping detections
+                filtered_matches = non_maximum_suppression(all_matches, overlap_threshold=0.3)
+                
+                # Limit to max_matches
+                filtered_matches = filtered_matches[:max_matches]
+                
+                print(f"[PHONE] Found {len(all_matches)} matches for {template_path}, kept {len(filtered_matches)} after NMS:")
+                for i, match in enumerate(filtered_matches):
+                    print(f"  {i+1}. Confidence: {match['confidence']:.3f}, Scale: {match['scale']}, Position: {match['center']}")
+
+                # Return list of Point objects
+                return [pyautogui.Point(match['center'][0], match['center'][1]) for match in filtered_matches]
+
+            # If no match found and we still have time, wait a bit before retrying
+            if time.time() - start_time < max_search_time:
+                time.sleep(0.05)  # Small delay between retries
+
+        # If we reach here, no match was found within the time limit
+        print(f"[PHONE] {template_path} not found within {min_search_time}s")
+        return []
+
+    except Exception as e:
+        print(f"[PHONE] Image recognition error: {e}, falling back to desktop")
+        return []
+
+
+def non_maximum_suppression(matches, overlap_threshold=0.3):
+    """
+    Apply non-maximum suppression to remove overlapping detections.
+    
+    Args:
+        matches: List of match dictionaries with 'center', 'confidence', 'location' keys
+        overlap_threshold: IoU threshold for considering detections as overlapping
+    
+    Returns:
+        List of matches with overlapping detections removed
+    """
+    if not matches:
+        return []
+    
+    # Sort by confidence (highest first)
+    matches = sorted(matches, key=lambda x: x['confidence'], reverse=True)
+    
+    # Calculate IoU between bounding boxes
+    def calculate_iou(box1, box2):
+        """Calculate Intersection over Union between two bounding boxes"""
+        x1, y1, w1, h1 = box1
+        x2, y2, w2, h2 = box2
+        
+        # Calculate intersection
+        x_left = max(x1, x2)
+        y_top = max(y1, y2)
+        x_right = min(x1 + w1, x2 + w2)
+        y_bottom = min(y1 + h1, y2 + h2)
+        
+        if x_right < x_left or y_bottom < y_top:
+            return 0.0
+        
+        intersection = (x_right - x_left) * (y_bottom - y_top)
+        
+        # Calculate union
+        area1 = w1 * h1
+        area2 = w2 * h2
+        union = area1 + area2 - intersection
+        
+        return intersection / union if union > 0 else 0.0
+    
+    # Apply non-maximum suppression
+    kept_matches = []
+    
+    for match in matches:
+        should_keep = True
+        
+        for kept_match in kept_matches:
+            iou = calculate_iou(match['location'], kept_match['location'])
+            if iou > overlap_threshold:
+                should_keep = False
+                break
+        
+        if should_keep:
+            kept_matches.append(match)
+    
+    return kept_matches

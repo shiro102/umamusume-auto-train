@@ -28,6 +28,8 @@ from utils.constants import MOOD_LIST
 from utils.adb_utils import (
     adb_click,
     adb_move_to,
+    adb_mouse_down,
+    adb_mouse_up,
     adb_scroll,
     auto_connect_mumu,
     check_mumu_resolution,
@@ -169,15 +171,31 @@ def check_training():
         ),
     }
     results = {}
+    last_mouse_pos = None
 
     for key, icon_path in training_types.items():
         pos = locate_center_on_screen(
             icon_path, confidence=0.8 if not USE_PHONE else 0.65
         )
+
+        # Check for second icon option if first one is not found
+        if not pos:
+            pos = locate_center_on_screen(
+                icon_path.replace(".png", "_2.png"),
+                confidence=0.8 if not USE_PHONE else 0.65,
+            )
+
+        # Check for third icon option if second one is not found
+        if not pos:
+            pos = locate_center_on_screen(
+                icon_path.replace(".png", "_3.png"),
+                confidence=0.8 if not USE_PHONE else 0.65,
+            )
+
         if pos:
             if USE_PHONE:
-                adb_move_to(pos.x, pos.y, duration=0.1)
-                # adb_click(pos.x, pos.y)
+                adb_mouse_down(pos.x, pos.y)
+                last_mouse_pos = (pos.x, pos.y)
             else:
                 pyautogui.moveTo(pos, duration=0.1)
                 pyautogui.mouseDown()
@@ -193,7 +211,15 @@ def check_training():
             print(f"[{key.upper()}] → {support_counts}, Fail: {failure_chance}%")
             time.sleep(0.1)
 
-    pyautogui.mouseUp()
+    if USE_PHONE:
+        # For ADB, release the mouse at the last position where it was pressed
+        if last_mouse_pos:
+            adb_mouse_up(last_mouse_pos[0], last_mouse_pos[1])
+        else:
+            # Fallback to center if no position was recorded
+            adb_mouse_up(360, 640)  # Center of 720x1280 screen
+    else:
+        pyautogui.mouseUp()
     click(img="assets/buttons/back_btn.png")
     return results
 
@@ -201,8 +227,13 @@ def check_training():
 def do_train(train):
     if USE_PHONE:
         train_btn = locate_center_on_screen(
-            f"assets/icons/train_{train}_phone.png", confidence=0.65
+            f"assets/icons/train_{train}_phone.png", confidence=0.7
         )
+
+        if not train_btn:
+            train_btn = locate_center_on_screen(
+                f"assets/icons/train_{train}_phone_2.png", confidence=0.7
+            )
     else:
         train_btn = locate_center_on_screen(
             f"assets/icons/train_{train}.png", confidence=0.8
@@ -210,7 +241,10 @@ def do_train(train):
 
     if train_btn:
         if USE_PHONE:
+            print(f"[INFO] Moving to {train} found at {train_btn}")
             adb_move_to(train_btn.x, train_btn.y, duration=0.15)
+            adb_click(train_btn.x, train_btn.y)
+            time.sleep(0.1)
             adb_click(train_btn.x, train_btn.y)
         else:
             pyautogui.moveTo(train_btn, duration=0.15)
@@ -220,7 +254,7 @@ def do_train(train):
 def do_rest():
     rest_btn = locate_center_on_screen("assets/buttons/rest_btn.png", confidence=0.8)
     rest_summber_btn = locate_center_on_screen(
-        "assets/buttons/rest_summer_btn.png", confidence=0.8
+        "assets/buttons/rest_summer_btn.png", confidence=0.6
     )
 
     if rest_btn:
@@ -398,7 +432,6 @@ def get_screenshot_for_debug():
 
 
 def race_select(prioritize_g1=False):
-    pyautogui.moveTo(x=560, y=680)
 
     time.sleep(0.2)
 
@@ -499,7 +532,10 @@ def race_select(prioritize_g1=False):
                 return True
 
             for i in range(4):
-                pyautogui.scroll(-300)
+                if USE_PHONE:
+                    adb_scroll(-300)
+                else:
+                    pyautogui.scroll(-300)
 
         return False
 
@@ -631,11 +667,19 @@ def career_lobby():
             continue
 
         ### Third check, next button
-        if click(img="assets/buttons/next_btn.png", minSearch=0.2):
+        if click(
+            img="assets/buttons/next_btn.png",
+            minSearch=0.2,
+            confidence=0.8 if not USE_PHONE else 0.7,
+        ):
             continue
 
         ### Fourth check, cancel button
-        if click(img="assets/buttons/cancel_btn.png", minSearch=0.2):
+        if click(
+            img="assets/buttons/cancel_btn.png",
+            minSearch=0.2,
+            confidence=0.8 if not USE_PHONE else 0.7,
+        ):
             continue
 
         ### Check if current menu is in career lobby
