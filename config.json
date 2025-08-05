@@ -1,5 +1,9 @@
 {
-  "priority_stat": ["spd", "sta", "pwr"],
+  "priority_stat": [
+    "spd",
+    "sta",
+    "pwr"
+  ],
   "minimum_mood": "GOOD",
   "maximum_failure": 15,
   "prioritize_g1_race": false,
@@ -7,10 +11,12 @@
   "enable_skill_point_check": true,
   "min_support": 2,
   "stat_caps": {
-  "spd": 1100,
-  "sta": 1100,
-  "pwr": 600,
-  "guts": 300,
-  "wit": 600
-  }
+    "spd": 1100,
+    "sta": 1100,
+    "pwr": 600,
+    "guts": 300,
+    "wit": 600
+  },
+  "usePhone": true,
+  "saveDebugImages": false
 }
