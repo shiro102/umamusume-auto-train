@@ -56,16 +56,16 @@ For PC
 - Your Uma must have already won the trophy for each race (the bot will skips the race)
 - Turn off all confirmation pop-ups in game settings
 - The game must be in the career lobby screen (the one with the Tazuna hint icon)
-- Go to settings game to editthe  race mode to Path To Fame to let race auto choose G1
+- Go to settings game to edit the race mode to Path To Fame to let race auto choose G1
 
 For Phone
-- For phone, must use Mumu Emulator and set screen resolution to 1280 x 720
+- For phone, must use Mumu Emulator (https://www.mumuplayer.com/) and set screen resolution to 1280 x 720
 - Your Uma must have already won the trophy for each race (the bot will skip the race)
 - Turn off all confirmation pop-ups in game settings
 - The game must be in the career lobby screen (the one with the Tazuna hint icon)
 - Set usePhone to true
 - Do not use prioritize_g1_race in phone
-- Go to settings game to editthe  race mode to "Path To Fame" to let race auto choose G1
+- Go to settings game to edit the race mode to "Path To Fame" to let race auto choose G1
 
 ### Configuration
 
@@ -257,7 +257,7 @@ git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 - Vào setting game chỉnh race mode thành Path To Fame để race auto chọn G1 khi đua
 
 #### Đối với điện thoại
-- Dùng giả lập Mumu và đặt độ phân giải 1280 x 720
+- Dùng giả lập Mumu (https://www.mumuplayer.com/) và đặt độ phân giải 1280 x 720
 - Uma đã thắng tất cả các cúp (bot sẽ bỏ qua các cuộc đua đã có cúp)
 - Tắt tất cả các pop-up xác nhận trong cài đặt game
 - Game phải ở màn hình career lobby (có biểu tượng Tazuna hint)
