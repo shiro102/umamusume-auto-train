@@ -201,13 +201,11 @@ Contributions are also very welcome, I would truly appreciate any support to hel
 ### Giới thiệu
 Đây là một bản fork từ [samsulpanjul/umamusume-auto-train](https://github.com/samsulpanjul/umamusume-auto-train)
 
-Như tiêu đề, đây là một công cụ tự động huấn luyện đơn giản cho Umamusume.
+Đây là một công cụ tự động huấn luyện tự động cho Umamusume.
 
 Dự án này được lấy cảm hứng từ [shiokaze/UmamusumeAutoTrainer](https://github.com/shiokaze/UmamusumeAutoTrainer)
 
 [Video demo](https://youtu.be/CXSYVD-iMJk)
-
-![Ảnh minh họa](screenshot.png)
 
 ### Tính năng
 - Tự động chọn tùy chọn dựa trên năng lượng (năm 2, năm 3, năm mới, huấn luyện thêm). Một số sự kiện của Kitasan Black, Fine Motion, v.v. đã được code thẳng trong phần mềm (bạn có thể tự thêm event của thẻ của mình)
