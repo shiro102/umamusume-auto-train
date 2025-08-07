@@ -8,9 +8,6 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 
 [Demo video](https://youtu.be/CXSYVD-iMJk)
 
-![Screenshot](screenshot.png)
-
-
 ## Features
 - Auto choose option with energy (2nd year, 3rd year, new year, extra training). Hard code some events of Kitasan Black, Fine Motion, etc. (you can add your own card)
 - Automatically trains Uma with stat prioritization
@@ -18,11 +15,11 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 - Checks mood and handles debuffs automatically
 - Rest and recreation management
 - Prioritizes G1 races if available for fan farming (only PC)
-- Skill point check for manually skill purchasing
+- Skill point check for manual skill purchasing
 - Stat caps to prevent overtraining specific stats
 - Improved training logic with better support card handling
 - Minimum support card requirements for training (Read Logic)
-- Phone version to not occupy the mouse (PC version will). But phone version will be slower than PC version (around 5 - 10 minutes / run)
+- Phone version to not occupy the mouse (PC version will). But phone version will be slower than PC version (around 5 - 10 minutes/run)
 
 ## Getting Started
 
@@ -41,7 +38,7 @@ git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 ### How to use
 
 - Clone the code from git: https://www.youtube.com/watch?v=ZFFtMyOFPe8
-- Install latest python version: https://www.python.org/downloads/ (https://www.youtube.com/watch?v=Ac3w0PjspWw&ab_channel=CyprienRusu)
+- Install latest Python version: https://www.python.org/downloads/ (https://www.youtube.com/watch?v=Ac3w0PjspWw&ab_channel=CyprienRusu)
 - Open Window PowerShell or Command Terminal
 - Go to folder of the code using cd /d (image) <img width="866" height="249" alt="image" src="https://github.com/user-attachments/assets/2f793ba7-90b0-4353-ad12-cc00a2f924d8" />
 - Run "pip install -r requirements.txt"
@@ -55,20 +52,20 @@ Make sure these conditions are met:
 
 For PC
 - Screen resolution must be 1920x1080 for PC
-- The game should be in fullscreen
+- The game should be in full screen
 - Your Uma must have already won the trophy for each race (the bot will skips the race)
 - Turn off all confirmation pop-ups in game settings
 - The game must be in the career lobby screen (the one with the Tazuna hint icon)
-- Go to setting game to edit race mode to Path To Fame to let race auto choose G1
+- Go to settings game to editthe  race mode to Path To Fame to let race auto choose G1
 
 For Phone
-- For phone, must use Mumu Emulator and set screen solution to 1280 x 720
-- Your Uma must have already won the trophy for each race (the bot will skips the race)
+- For phone, must use Mumu Emulator and set screen resolution to 1280 x 720
+- Your Uma must have already won the trophy for each race (the bot will skip the race)
 - Turn off all confirmation pop-ups in game settings
 - The game must be in the career lobby screen (the one with the Tazuna hint icon)
 - Set usePhone to true
 - Do not use prioritize_g1_race in phone
-- Go to setting game to edit race mode to Path To Fame to let race auto choose G1
+- Go to settings game to editthe  race mode to "Path To Fame" to let race auto choose G1
 
 ### Configuration
 
