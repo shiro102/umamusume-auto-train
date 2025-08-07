@@ -41,7 +41,7 @@ git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 ### How to use
 
 - Clone the code from git: https://www.youtube.com/watch?v=ZFFtMyOFPe8
-- Install latest python version: https://www.python.org/downloads/
+- Install latest python version: https://www.python.org/downloads/ (https://www.youtube.com/watch?v=Ac3w0PjspWw&ab_channel=CyprienRusu)
 - Open Window PowerShell or Command Terminal
 - Go to folder of the code using cd /d (image) <img width="866" height="249" alt="image" src="https://github.com/user-attachments/assets/2f793ba7-90b0-4353-ad12-cc00a2f924d8" />
 - Run "pip install -r requirements.txt"
@@ -239,7 +239,7 @@ git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 
 ##### Hướng dẫn sử dụng
 - Tải mã nguồn từ git: https://www.youtube.com/watch?v=ZFFtMyOFPe8
-- Cài đặt Python mới nhất: https://www.python.org/downloads/
+- Cài đặt Python mới nhất: https://www.python.org/downloads/ (https://www.youtube.com/watch?v=Ac3w0PjspWw&ab_channel=CyprienRusu)
 - Mở PowerShell hoặc Command Terminal
 - Di chuyển đến thư mục mã nguồn bằng lệnh `cd /d` (xem hình minh họa)
 - Chạy lệnh: `pip install -r requirements.txt`
