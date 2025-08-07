@@ -45,7 +45,7 @@ git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 - Open Window PowerShell or Command Terminal
 - Go to folder of the code using cd /d (image) <img width="866" height="249" alt="image" src="https://github.com/user-attachments/assets/2f793ba7-90b0-4353-ad12-cc00a2f924d8" />
 - Run "pip install -r requirements.txt"
-- Open game, fullscreen, resolution must be 1920 x 1080
+- Open game, fullscreen, resolution MUST BE 1920 x 1080
 - Run python main.py <img width="968" height="927" alt="image" src="https://github.com/user-attachments/assets/cce19ce0-6323-43a2-8757-c9e11849bd0d" />
 - Read the REQUIREMENTS below
 
