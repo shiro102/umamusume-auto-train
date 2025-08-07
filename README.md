@@ -8,7 +8,12 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 
 [Demo video](https://youtu.be/CXSYVD-iMJk)
 
-## Features
+# Language
+1. [English](#english)
+2. [Tiếng Việt](#tiếng-việt)
+
+## English
+### Features
 - Auto choose option with energy (2nd year, 3rd year, new year, extra training). Hard code some events of Kitasan Black, Fine Motion, etc. (you can add your own card)
 - Automatically trains Uma with stat prioritization
 - Keeps racing until fan count meets the goal, and always picks races with matching aptitude
@@ -21,21 +26,21 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 - Minimum support card requirements for training (Read Logic)
 - Phone version to not occupy the mouse (PC version will). But phone version will be slower than PC version (around 5 - 10 minutes/run)
 
-## Getting Started
+### Getting Started
 
-### Requirements
+#### Requirements
 
 - [Python 3.10+](https://www.python.org/downloads/)
 
-### Setup
+#### Setup
 
-#### Clone repository
+##### Clone repository
 
 ```
 git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 ```
 
-### How to use
+#### How to use
 
 - Clone the code from git: https://www.youtube.com/watch?v=ZFFtMyOFPe8
 - Install latest Python version: https://www.python.org/downloads/ and add it to the PATH in your PC environment variable (https://www.youtube.com/watch?v=Ac3w0PjspWw&ab_channel=CyprienRusu)
@@ -46,7 +51,7 @@ git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 - Run python main.py <img width="968" height="927" alt="image" src="https://github.com/user-attachments/assets/cce19ce0-6323-43a2-8757-c9e11849bd0d" />
 - Read the REQUIREMENTS below
 
-### BEFORE YOU START
+#### BEFORE YOU START
 
 Make sure these conditions are met:
 
@@ -67,7 +72,7 @@ For Phone
 - Do not use prioritize_g1_race in phone
 - Go to settings game to edit the race mode to "Path To Fame" to let race auto choose G1
 
-### Configuration
+#### Configuration
 
 You can edit your configuration in `config.json`
 
@@ -96,7 +101,7 @@ You can edit your configuration in `config.json`
 }
 ```
 
-#### Configuration Options
+##### Configuration Options
 
 `priority_stat` (array of strings)
 - Determines the training stat priority. The bot will focus on these stats in the given order of importance.
@@ -141,7 +146,7 @@ You can edit your configuration in `config.json`
 
 Make sure the values match exactly as expected, typos might cause errors.
 
-### Start
+#### Start
 
 ```
 python main.py
@@ -149,7 +154,7 @@ python main.py
 
 To stop the bot, just press `Ctrl + C` in your terminal, or move your mouse to the top-left corner of the screen.
 
-### Training Logic
+#### Training Logic
 
 The bot uses an improved training logic system:
 
@@ -160,14 +165,14 @@ The bot uses an improved training logic system:
 5. **Fallback Logic**: If rainbow training isn't available, falls back to most support card logic.
 6. **Rest Logic**: If energy is too low (every training have high failure rate) => Rest
 
-#### Race Prioritization
+##### Race Prioritization
 
 When `prioritize_g1_race` is enabled:
 - The bot will prioritize racing over training when G1 races are available
 - Automatically skips July and August (summer break) for racing
 - Checks skill points before race days and prompts if they exceed the cap
 
-### Known Issues
+#### Known Issues
 
 - Some Uma that has special event/target goals (like Restricted Train Goldship or 2 G1 Race Oguri Cap) may not working. So please avoid using Goldship for training right now to keep your 12 million yen safe. For Oguri Cap, you can turn on Prioritize G1 race
 - OCR might misread failure chance (e.g., reads 33% as 3%) and proceeds with training anyway.
@@ -177,7 +182,7 @@ When `prioritize_g1_race` is enabled:
 - The bot will skip "3 consecutive races warning" prompt for now
 - The bot stuck when "Crietia not meet" prompt appear
 
-### TODO
+#### TODO
 
 - Add Race Stragety option (right now the only option is manually changing it)
 - Do race that doesn't have trophy yet
@@ -191,12 +196,12 @@ When `prioritize_g1_race` is enabled:
 - Add better event options handling
 
 
-### Contribute
+#### Contribute
 
 If you run into any issues or something doesn't work as expected, feel free to open an issue.
 Contributions are also very welcome, I would truly appreciate any support to help improve this project further.
 
-## 🇻🇳 Tiếng Việt
+## Tiếng Việt
 
 ### Giới thiệu
 Đây là một bản fork từ [samsulpanjul/umamusume-auto-train](https://github.com/samsulpanjul/umamusume-auto-train)
