@@ -14,11 +14,14 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 
 # UPDATE:
 - Disabled GUTS and FRIEND check because they are useless for training now
-- ALL events are now stored in event.json, you can add more events according to your support cards
+- ALL events are now stored in events.json. You can add more events according to your support cards
+- For Phone, always click GUTS first and then start clicking other train modes to avoid being unable to detect other mode.
+
+Get new updates using "git pull" in Command Prompt or PowerShell at the tool's folder location
 
 ## English
 ### Features
-- Auto choose option with energy (2nd year, 3rd year, new year, extra training). Hard code some events of Kitasan Black, Fine Motion, etc. (you can add your own card)
+- Auto choose option with energy (2nd year, 3rd year, new year, extra training). Hard-code some events of Kitasan Black, Fine Motion, etc. (you can add your own card)
 - Automatically trains Uma with stat prioritization
 - Keeps racing until fan count meets the goal, and always picks races with matching aptitude
 - Checks mood and handles debuffs automatically
@@ -28,7 +31,7 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 - Stat caps to prevent overtraining specific stats
 - Improved training logic with better support card handling
 - Minimum support card requirements for training (Read Logic)
-- Phone version to not occupy the mouse (PC version will). But phone version will be slower than PC version (around 5 - 10 minutes/run)
+- Phone version to not occupy the mouse (PC version will). But the phone version will be slower than the PC version (around 5 - 10 minutes/run)
 
 ### Getting Started
 
@@ -47,9 +50,9 @@ git clone https://github.com/samsulpanjul/umamusume-auto-train.git
 #### How to use
 
 - Clone the code from git: https://www.youtube.com/watch?v=ZFFtMyOFPe8
-- Install latest Python version: https://www.python.org/downloads/ and add it to the PATH in your PC environment variable (https://www.youtube.com/watch?v=Ac3w0PjspWw&ab_channel=CyprienRusu)
-- Open Window PowerShell or Command Terminal
-- Go to folder of the code using cd /d (image) <img width="866" height="249" alt="image" src="https://github.com/user-attachments/assets/2f793ba7-90b0-4353-ad12-cc00a2f924d8" />
+- Install the latest Python version: https://www.python.org/downloads/ and add it to the PATH in your PC environment variable (https://www.youtube.com/watch?v=Ac3w0PjspWw&ab_channel=CyprienRusu)
+- Open Windows PowerShell or Command Terminal
+- Go to the folder of the code using cd /d (image) <img width="866" height="249" alt="image" src="https://github.com/user-attachments/assets/2f793ba7-90b0-4353-ad12-cc00a2f924d8" />
 - Run "pip install -r requirements.txt"
 - Open game, fullscreen, resolution MUST BE 1920 x 1080
 - Run python main.py <img width="968" height="927" alt="image" src="https://github.com/user-attachments/assets/cce19ce0-6323-43a2-8757-c9e11849bd0d" />
@@ -109,7 +112,7 @@ You can add more events according to your support cards in `events.json`
 ```json
 {
   "Together for Tea": { # just a name for that event, anything works
-    "key": "together for tea", # key word to match the event, recommend only 2-3 first words
+    "key": "together for tea", # keyword to match the event, recommend only 2-3 first words
     "choice": 2, # choice to choose, start from 1
   }
 }
