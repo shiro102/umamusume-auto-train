@@ -54,6 +54,9 @@ def is_racing_available(year):
 with open("config.json", "r", encoding="utf-8") as file:
     config = json.load(file)
 
+with open("events.json", "r", encoding="utf-8") as file:
+    predefined_events = json.load(file)
+
 MINIMUM_MOOD = config["minimum_mood"]
 PRIORITIZE_G1_RACE = config["prioritize_g1_race"]
 USE_PHONE = config.get("usePhone", False)
@@ -173,6 +176,30 @@ def check_training():
     results = {}
     last_mouse_pos = None
 
+    # move to guts training first (if found)
+    btn = locate_center_on_screen(
+        training_types["guts"], confidence=0.8 if not USE_PHONE else 0.65
+    )
+
+    # Try alternative templates if not found
+    if not btn:
+        alt_2 = training_types["guts"].replace(".png", "_2.png")
+        alt_3 = training_types["guts"].replace(".png", "_3.png")
+        btn = locate_center_on_screen(
+            alt_2, confidence=0.8 if not USE_PHONE else 0.65
+        ) or locate_center_on_screen(
+            alt_3, confidence=0.8 if not USE_PHONE else 0.65
+        )
+
+    if btn:
+        if USE_PHONE:
+            adb_move_to(btn.x, btn.y, duration=0.175)
+        else:
+            pyautogui.moveTo(btn, duration=0.175)
+        time.sleep(0.2)
+    else:
+        print("[INFO] Guts training icon not found; continuing without pre-move.")
+
     for key, icon_path in training_types.items():
         pos = locate_center_on_screen(
             icon_path, confidence=0.8 if not USE_PHONE else 0.65
@@ -239,6 +266,7 @@ def do_train(train):
             f"assets/icons/train_{train}.png", confidence=0.8
         )
 
+    print(f"[INFO] Training button found: {train_btn}")
     if train_btn:
         if USE_PHONE:
             print(f"[INFO] Moving to {train} found at {train_btn}")
@@ -541,12 +569,12 @@ def race_select(prioritize_g1=False):
 
 
 def race_prep():
-    time.sleep(1)
+    time.sleep(3.5)
     print(f"[INFO] Finding view results button at time: {time.time()}")
     view_result_btn = locate_center_on_screen(
         "assets/buttons/view_results.png",
         confidence=0.8 if not USE_PHONE else 0.6,
-        min_search_time=10,
+        min_search_time=12,
     )
     print(f"[INFO] View result button found at time: {time.time()}")
 
@@ -608,54 +636,77 @@ def career_lobby():
                     )
                     NEW_YEAR_EVENT_DONE = True
                     continue
-        else:  # support event belows, auto choose 1st option if not specified
-            if (
-                "extra training" in event_name.lower()
-            ):  # Always choose rest option for extra training event (depends on the Uma), change if needed
-                print(
-                    "[ACTION] Extra Training event found, clicking choice 2 for energy"
-                )
-                if click_event_choice(2, minSearch=0.1, confidence=0.9):
-                    print("[ACTION] Clicked choice 2")
-                    continue
-            elif (
-                "lovely training weather" in event_name.lower()
-            ):  # FM event, choose 3rd for Perfect Condition
-                print(
-                    "[ACTION] Lovely Training Weather event found, clicking choice 3 for Perfect Condition"
-                )
-                if click_event_choice(3, minSearch=0.1, confidence=0.9):
-                    print("[ACTION] Clicked choice 3")
-                    continue
-            elif (
-                "preparing my special move" in event_name.lower()
-            ):  # Biko Pegasus event, choose 2nd for energy
-                print(
-                    "[ACTION] Preparing My Special Move event found, clicking choice 2 for energy"
-                )
-                if click_event_choice(2, minSearch=0.1, confidence=0.9):
-                    print("[ACTION] Clicked choice 2")
-                    continue
-            elif (
-                "solo nighttime run" in event_name.lower()
-            ):  # Manhattan Cafe event, choose 2nd for energy
-                print(
-                    "[ACTION] Solo Nighttime Run event found, clicking choice 2 for energy"
-                )
-                if click_event_choice(2, minSearch=0.1, confidence=0.9):
-                    print("[ACTION] Clicked choice 2")
-                    continue
-            elif (
-                "happenstance introduced" in event_name.lower()
-            ):  # Agnes Tachyon event, choose 2nd for wit
-                print("[ACTION] Happenstance event found, clicking choice 2 for wit")
-                if click_event_choice(2, minSearch=0.1, confidence=0.9):
-                    print("[ACTION] Clicked choice 2")
-                    continue
-            else:
-                if click_event_choice(1, minSearch=0.1, confidence=0.9):
-                    print("[ACTION] Clicked choice 1")
-                    continue
+        else:  
+            for predefine_event_name, predefine_event_data in predefined_events.items():
+                if predefine_event_data['key'].lower() in event_name.lower():
+                    print(f"[ACTION] {predefine_event_name} event found, clicking choice {predefine_event_data['choice']}")
+                    if click_event_choice(predefine_event_data['choice'], minSearch=0.1, confidence=0.9):
+                        print(f"[ACTION] Clicked choice {predefine_event_data['choice']}")
+                        continue
+
+            if click_event_choice(1, minSearch=0.1, confidence=0.9):
+                print("[ACTION] Clicked choice 1")
+                continue
+
+            # support event belows, auto choose 1st option if not specified
+            # if (
+            #     "extra training" in event_name.lower()
+            # ):  # Always choose rest option for extra training event (depends on the Uma), change if needed
+            #     print(
+            #         "[ACTION] Extra Training event found, clicking choice 2 for energy"
+            #     )
+            #     if click_event_choice(2, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 2")
+            #         continue
+            # elif (
+            #     "lovely training weather" in event_name.lower()
+            # ):  # FM event, choose 3rd for Perfect Condition
+            #     print(
+            #         "[ACTION] Lovely Training Weather event found, clicking choice 3 for Perfect Condition"
+            #     )
+            #     if click_event_choice(3, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 3")
+            #         continue
+            # elif (
+            #     "preparing my special move" in event_name.lower()
+            # ):  # Biko Pegasus event, choose 2nd for energy
+            #     print(
+            #         "[ACTION] Preparing My Special Move event found, clicking choice 2 for energy"
+            #     )
+            #     if click_event_choice(2, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 2")
+            #         continue
+            # elif (
+            #     "solo nighttime run" in event_name.lower()
+            # ):  # Manhattan Cafe event, choose 2nd for energy
+            #     print(
+            #         "[ACTION] Solo Nighttime Run event found, clicking choice 2 for energy"
+            #     )
+            #     if click_event_choice(2, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 2")
+            #         continue
+            # elif (
+            #     "happenstance introduced" in event_name.lower()
+            # ):  # Agnes Tachyon event, choose 2nd for wit
+            #     print("[ACTION] Happenstance event found, clicking choice 2 for wit")
+            #     if click_event_choice(2, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 2")
+            #         continue
+            # elif (
+            #     "just an acupuncturist" in event_name.lower()
+            # ):  # Just an acupuncturist event, choose 1st for energy
+            #     print("[ACTION] Acupuncturist event found, clicking choice 4")
+            #     if click_event_choice(4, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 4")
+                    
+            #     time.sleep(0.5)
+            #     if click_event_choice(1, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 1")
+            #         continue
+            # else:
+            #     if click_event_choice(1, minSearch=0.1, confidence=0.9):
+            #         print("[ACTION] Clicked choice 1")
+            #         continue
 
         ### Second check, inspiration
         if click(
@@ -754,16 +805,18 @@ def career_lobby():
         if not FIRST_TURN_DONE:
             FIRST_TURN_DONE = True
 
-        # # Check if goals is not met criteria AND it is not Pre-Debut AND turn is less than 10 AND Goal is already achieved
-        # # if criteria.split(" ")[0] != "criteria" and year != "Junior Year Pre-Debut" and turn < 10 and criteria != "Goal Achieved":
-        # #   print("[INFO] Run for fans.")
-        # #   race_found = do_race()
-        # #   if race_found:
-        # #     continue
-        # #   else:
-        # #     # If there is no race matching to aptitude, go back and do training instead
-        # #     click(img="assets/buttons/back_btn.png", text="[INFO] Race not found. Proceeding to training.")
-        # #     time.sleep(0.5)
+        # Check if goals is not met criteria AND it is not Pre-Debut AND turn is less than 10 AND Goal is already achieved (for desktop only)
+        if not USE_PHONE:
+            if criteria.split(" ")[0] != "criteria" and year != "Junior Year Pre-Debut" and turn < 10 and criteria != "Goal Achieved":
+                print("[INFO] Run for fans.")
+                race_found = do_race()
+                
+                if race_found:
+                    continue
+                else:
+                    # If there is no race matching to aptitude, go back and do training instead
+                    click(img="assets/buttons/back_btn.png", text="[INFO] Race not found. Proceeding to training.")
+                    time.sleep(0.5)
 
         year_parts = year.split(" ")
         # If Prioritize G1 Race is true, check G1 race every turn

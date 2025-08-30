@@ -1,4 +1,5 @@
 import re
+import time
 
 from utils.screenshot import capture_region, enhanced_screenshot
 from core.ocr import extract_text, extract_number
@@ -41,19 +42,20 @@ def check_support_card(threshold=0.8, isPhone=False):
         "spd": "assets/icons/support_card_type_spd.png",
         "sta": "assets/icons/support_card_type_sta.png",
         "pwr": "assets/icons/support_card_type_pwr.png",
-        "guts": "assets/icons/support_card_type_guts.png",
+        # "guts": "assets/icons/support_card_type_guts.png",
         "wit": "assets/icons/support_card_type_wit.png",
-        "friend": "assets/icons/support_card_type_friend.png",
+        # "friend": "assets/icons/support_card_type_friend.png",
     }
 
     regions = get_regions_for_mode()
     count_result = {}
 
     for key, icon_path in SUPPORT_ICONS.items():
+        time.sleep(0.2)
         matches = match_template(
             icon_path,
             regions["SUPPORT_CARD_ICON_REGION"],
-            threshold if not USE_PHONE else 0.7,
+            threshold if not USE_PHONE else 0.65,
             debug=False,
         )
         count_result[key] = len(matches)

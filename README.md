@@ -1,4 +1,4 @@
-# Umamusume Auto Train
+# Umamusume Auto Train Phone Simulator & PC
 
 This is a fork from [samsulpanjul/umamusume-auto-train](https://github.com/samsulpanjul/umamusume-auto-train)
 
@@ -11,6 +11,10 @@ This project is inspired by [shiokaze/UmamusumeAutoTrainer](https://github.com/s
 # Language
 1. [English](#english)
 2. [Tiếng Việt](#tiếng-việt)
+
+# UPDATE:
+- Disabled GUTS and FRIEND check because they are useless for training now
+- ALL events are now stored in event.json, you can add more events according to your support cards
 
 ## English
 ### Features
@@ -100,6 +104,17 @@ You can edit your configuration in `config.json`
   "saveDebugImages": false
 }
 ```
+
+You can add more events according to your support cards in `events.json`
+```json
+{
+  "Together for Tea": { # just a name for that event, anything works
+    "key": "together for tea", # key word to match the event, recommend only 2-3 first words
+    "choice": 2, # choice to choose, start from 1
+  }
+}
+```
+
 
 ##### Configuration Options
 
@@ -293,6 +308,16 @@ Bạn có thể chỉnh sửa cấu hình trong `config.json`
   },
   "usePhone": true,
   "saveDebugImages": false
+}
+```
+
+Bạn cũng có thể thêm events và option vào trong file `events.json` dựa vào các thẻ support mà bạn có.
+```json
+{
+  "Together for Tea": { # tên của event có thể đặt tùy ý
+    "key": "together for tea", # từ khóa của event đó, viết liền và nên chọn 2-3 từ đầu tiên
+    "choice": 2, # option để chọn, bắt đầu từ 1
+  }
 }
 ```
 

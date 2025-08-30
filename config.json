@@ -13,9 +13,9 @@
   "stat_caps": {
     "spd": 1100,
     "sta": 1100,
-    "pwr": 600,
+    "pwr": 900,
     "guts": 300,
-    "wit": 600
+    "wit": 900
   },
   "usePhone": true,
   "saveDebugImages": false

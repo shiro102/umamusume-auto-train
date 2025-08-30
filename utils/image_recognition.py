@@ -200,11 +200,7 @@ def locate_center_on_phone(
         return None
 
     except Exception as e:
-        print(f"[PHONE] Image recognition error: {e}, falling back to desktop")
-        return locate_center_on_desktop(
-            template_path, confidence, min_search_time, region
-        )
-
+        print(f"[PHONE] Image recognition error: {e}")
 
 def locate_center_on_desktop(
     template_path, confidence=0.8, min_search_time=0.2, region=None
