@@ -21,8 +21,8 @@ def get_config():
 def stat_state():
     stat_regions = {
         "spd": (310, 723, 55, 20) if not USE_PHONE else (73, 858, 65, 22),
-        "sta": (405, 723, 55, 20) if not USE_PHONE else (190, 858, 65, 22),
-        "pwr": (500, 723, 55, 20) if not USE_PHONE else (302, 858, 65, 22),
+        "sta": (405, 723, 55, 20) if not USE_PHONE else (188, 858, 60, 22),
+        "pwr": (500, 723, 55, 20) if not USE_PHONE else (300, 858, 60, 22),
         "guts": (595, 723, 55, 20) if not USE_PHONE else (412, 858, 65, 22),
         "wit": (690, 723, 55, 20) if not USE_PHONE else (522, 858, 65, 22),
     }

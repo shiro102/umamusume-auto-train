@@ -64,6 +64,35 @@ NEW_YEAR_EVENT_DONE = False
 FIRST_TURN_DONE = False
 
 
+training_types = {
+    "spd": (
+        "assets/icons/train_spd.png"
+        if not USE_PHONE
+        else "assets/icons/train_spd_phone.png"
+    ),
+    "sta": (
+        "assets/icons/train_sta.png"
+        if not USE_PHONE
+        else "assets/icons/train_sta_phone.png"
+    ),
+    "pwr": (
+        "assets/icons/train_pwr.png"
+        if not USE_PHONE
+        else "assets/icons/train_pwr_phone.png"
+    ),
+    "guts": (
+        "assets/icons/train_guts.png"
+        if not USE_PHONE
+        else "assets/icons/train_guts_phone.png"
+    ),
+    "wit": (
+        "assets/icons/train_wit.png"
+        if not USE_PHONE
+        else "assets/icons/train_wit_phone.png"
+    ),
+}
+
+
 def get_config():
     return config
 
@@ -145,38 +174,8 @@ def go_to_training():
     )
 
 
-def check_training():
-    training_types = {
-        "spd": (
-            "assets/icons/train_spd.png"
-            if not USE_PHONE
-            else "assets/icons/train_spd_phone.png"
-        ),
-        "sta": (
-            "assets/icons/train_sta.png"
-            if not USE_PHONE
-            else "assets/icons/train_sta_phone.png"
-        ),
-        "pwr": (
-            "assets/icons/train_pwr.png"
-            if not USE_PHONE
-            else "assets/icons/train_pwr_phone.png"
-        ),
-        "guts": (
-            "assets/icons/train_guts.png"
-            if not USE_PHONE
-            else "assets/icons/train_guts_phone.png"
-        ),
-        "wit": (
-            "assets/icons/train_wit.png"
-            if not USE_PHONE
-            else "assets/icons/train_wit_phone.png"
-        ),
-    }
-    results = {}
-    last_mouse_pos = None
-
-    # move to guts training first (if found)
+def click_guts_button():
+    """Dedicated function to click the guts training button with fallback templates"""
     btn = locate_center_on_screen(
         training_types["guts"], confidence=0.8 if not USE_PHONE else 0.65
     )
@@ -187,18 +186,27 @@ def check_training():
         alt_3 = training_types["guts"].replace(".png", "_3.png")
         btn = locate_center_on_screen(
             alt_2, confidence=0.8 if not USE_PHONE else 0.65
-        ) or locate_center_on_screen(
-            alt_3, confidence=0.8 if not USE_PHONE else 0.65
-        )
+        ) or locate_center_on_screen(alt_3, confidence=0.8 if not USE_PHONE else 0.65)
 
     if btn:
         if USE_PHONE:
             adb_move_to(btn.x, btn.y, duration=0.175)
+            time.sleep(0.2)
         else:
             pyautogui.moveTo(btn, duration=0.175)
-        time.sleep(0.2)
+            time.sleep(0.2)
+        return True
     else:
         print("[INFO] Guts training icon not found; continuing without pre-move.")
+        return False
+
+
+def check_training():
+    results = {}
+    last_mouse_pos = None
+
+    ### move to guts training first
+    click_guts_button()
 
     for key, icon_path in training_types.items():
         pos = locate_center_on_screen(
@@ -247,6 +255,7 @@ def check_training():
             adb_mouse_up(360, 640)  # Center of 720x1280 screen
     else:
         pyautogui.mouseUp()
+
     click(img="assets/buttons/back_btn.png")
     return results
 
@@ -636,12 +645,18 @@ def career_lobby():
                     )
                     NEW_YEAR_EVENT_DONE = True
                     continue
-        else:  
+        else:
             for predefine_event_name, predefine_event_data in predefined_events.items():
-                if predefine_event_data['key'].lower() in event_name.lower():
-                    print(f"[ACTION] {predefine_event_name} event found, clicking choice {predefine_event_data['choice']}")
-                    if click_event_choice(predefine_event_data['choice'], minSearch=0.1, confidence=0.9):
-                        print(f"[ACTION] Clicked choice {predefine_event_data['choice']}")
+                if predefine_event_data["key"].lower() in event_name.lower():
+                    print(
+                        f"[ACTION] {predefine_event_name} event found, clicking choice {predefine_event_data['choice']}"
+                    )
+                    if click_event_choice(
+                        predefine_event_data["choice"], minSearch=0.1, confidence=0.9
+                    ):
+                        print(
+                            f"[ACTION] Clicked choice {predefine_event_data['choice']}"
+                        )
                         continue
 
             if click_event_choice(1, minSearch=0.1, confidence=0.9):
@@ -698,7 +713,7 @@ def career_lobby():
             #     print("[ACTION] Acupuncturist event found, clicking choice 4")
             #     if click_event_choice(4, minSearch=0.1, confidence=0.9):
             #         print("[ACTION] Clicked choice 4")
-                    
+
             #     time.sleep(0.5)
             #     if click_event_choice(1, minSearch=0.1, confidence=0.9):
             #         print("[ACTION] Clicked choice 1")
@@ -807,15 +822,23 @@ def career_lobby():
 
         # Check if goals is not met criteria AND it is not Pre-Debut AND turn is less than 10 AND Goal is already achieved (for desktop only)
         if not USE_PHONE:
-            if criteria.split(" ")[0] != "criteria" and year != "Junior Year Pre-Debut" and turn < 10 and criteria != "Goal Achieved":
+            if (
+                criteria.split(" ")[0] != "criteria"
+                and year != "Junior Year Pre-Debut"
+                and turn < 10
+                and criteria != "Goal Achieved"
+            ):
                 print("[INFO] Run for fans.")
                 race_found = do_race()
-                
+
                 if race_found:
                     continue
                 else:
                     # If there is no race matching to aptitude, go back and do training instead
-                    click(img="assets/buttons/back_btn.png", text="[INFO] Race not found. Proceeding to training.")
+                    click(
+                        img="assets/buttons/back_btn.png",
+                        text="[INFO] Race not found. Proceeding to training.",
+                    )
                     time.sleep(0.5)
 
         year_parts = year.split(" ")
@@ -882,12 +905,27 @@ def career_lobby():
                 if best_training:
                     go_to_training()
                     time.sleep(0.5)
+
+                    ### move to guts first if it is wits training
+                    if best_training == "wit":
+                        print("[INFO] Moving to guts training first for wits training.")
+                        click_guts_button()
+
                     do_train(best_training)
                 else:
                     do_rest()
+        elif best_training == "Rest":
+            do_rest()
+            continue
         elif best_training:
             go_to_training()
             time.sleep(0.5)
+
+            ### move to guts first if it is wits training
+            if best_training == "wit":
+                print("[INFO] Moving to guts training first for wits training.")
+                click_guts_button()
+
             do_train(best_training)
         else:
             do_rest()

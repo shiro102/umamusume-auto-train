@@ -105,15 +105,18 @@ def most_support_card(results):
 
 # Do rainbow training
 def rainbow_training(results):
-    # Get rainbow training (tolerance for high failure rate when number of rainbow support card is high
-    rainbow_candidates = {
-        stat: data
-        for stat, data in results.items()
-        if (int(data["failure"]) <= MAX_FAILURE and data["support"].get(stat, 0) > 0)
-        or (int(data["failure"]) <= 25 and data["support"].get(stat, 0) >= 2)
-        or (int(data["failure"]) <= 45 and data["support"].get(stat, 0) >= 3)
-    }
+    rainbow_candidates = {}
 
+    for stat, data in results.items():
+        if (int(data["failure"]) >= 5 and data["support"].get(stat, 0) == 1):
+            rainbow_candidates["rest"] = "Rest"
+        # Get rainbow training (tolerance for high failure rate when number of rainbow support card is high
+        if (int(data["failure"]) <= 25 and data["support"].get(stat, 0) >= 2):
+            rainbow_candidates[stat] = data
+
+        if (int(data["failure"]) <= 45 and data["support"].get(stat, 0) >= 3):
+            rainbow_candidates[stat] = data
+    
     if not rainbow_candidates:
         print("\n[INFO] No rainbow training found under failure threshold.")
         return None

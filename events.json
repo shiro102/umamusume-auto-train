@@ -86,5 +86,13 @@
   "Together for Tea": {
     "key": "together for tea",
     "choice": 2
+  },
+  "Best Foot Forward!": {
+    "key": "best foot",
+    "choice": 2
+  },
+  "Full-Power Eating!": {
+    "key": "eating",
+    "choice": 2
   }
 }
