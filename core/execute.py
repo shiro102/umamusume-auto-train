@@ -514,7 +514,7 @@ def race_select(prioritize_g1=False):
 
             for i in range(4):
                 if USE_PHONE:
-                    adb_scroll(-300)
+                    adb_scroll(150, 360, 800)
                 else:
                     pyautogui.scroll(-300)
 
@@ -561,7 +561,7 @@ def race_select(prioritize_g1=False):
 
             for i in range(4):
                 if USE_PHONE:
-                    adb_scroll(-300)
+                    adb_scroll(150, 360, 800)
                 else:
                     pyautogui.scroll(-300)
 
